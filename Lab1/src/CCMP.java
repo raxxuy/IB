@@ -93,10 +93,10 @@ public class CCMP {
         }
 
         // Trim the decrypted data to remove trailing zeros.
-        ClearTextFrame newFrame = new ClearTextFrame(frame.frameHeader, trim(decryptedData));
-        newFrame.setPn(Arrays.copyOf(frame.pn, frame.pn.length));
+        ClearTextFrame decryptedFrame = new ClearTextFrame(frame.frameHeader, trim(decryptedData));
+        decryptedFrame.setPn(Arrays.copyOf(frame.pn, frame.pn.length));
 
-        return newFrame;
+        return decryptedFrame;
     }
 
     public byte[] generateMIC(FrameHeader header, byte[] data, byte[] nonce) throws Exception {
