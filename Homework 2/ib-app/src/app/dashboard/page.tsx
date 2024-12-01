@@ -1,5 +1,6 @@
 "use client";
 
+import { deleteSession, getSessionByUserId } from "@/lib/db/actions/sessions";
 import { User } from "@prisma/client";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -17,18 +18,28 @@ export default function Dashboard() {
       .then((data) => setUser(data));
   }, []);
 
-  const logout = () => {
+  const logout = async () => {
     document.cookie = `token=; path=/;`;
+    const session = await getSessionByUserId(user!.id);
+    if (session) {
+      await deleteSession(session.id);
+    }
     router.push("/");
   };
 
   return (
     <div>
-      <h1>{user?.username}</h1>
-      <p>{user?.email}</p>
-      <p>{user?.createdAt.toString()}</p>
-      <p>{user?.updatedAt.toString()}</p>
-      <button onClick={() => logout()}>Logout</button>
+      {user ? (
+        <>
+          <h1>{user.username}</h1>
+          <p>{user.email}</p>
+          <p>{user.createdAt.toString()}</p>
+          <p>{user.updatedAt.toString()}</p>
+          <button onClick={() => logout()}>Logout</button>
+        </>
+      ) : (
+        <h1>Not logged in</h1>
+      )}
     </div>
   );
 }

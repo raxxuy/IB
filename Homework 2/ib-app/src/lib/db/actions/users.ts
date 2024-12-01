@@ -1,3 +1,5 @@
+"use server";
+
 import prisma from "..";
 
 export async function createUser(username: string, email: string, password: string) {

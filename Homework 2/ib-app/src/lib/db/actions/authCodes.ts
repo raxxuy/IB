@@ -1,3 +1,5 @@
+"use server";
+
 import prisma from "..";
 
 export async function createAuthCode(userId: string, code: string, type: string, expiresAt: Date) {

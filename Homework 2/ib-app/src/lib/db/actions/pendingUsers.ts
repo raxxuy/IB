@@ -1,3 +1,5 @@
+"use server";
+
 import prisma from "..";
 import { deleteAuthCode, getAuthCodeByUserId } from "./authCodes";
 

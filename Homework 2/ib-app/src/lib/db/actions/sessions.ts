@@ -1,3 +1,5 @@
+"use server";
+
 import prisma from "..";
 
 export async function createSession(userId: string, token: string, expiresAt: Date) {
@@ -17,6 +19,11 @@ export async function getSessionByToken(token: string) {
 
 export async function deleteSession(id: string) {
   return await prisma.session.delete({ where: { id } });
+}
+
+export async function getSessionByUserId(userId: string) {
+  const session = await prisma.session.findUnique({ where: { userId } });
+  return validateSession(session);
 }
 
 async function validateSession(session: any) {
