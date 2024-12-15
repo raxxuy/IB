@@ -19,13 +19,13 @@ export async function POST(request: Request) {
   if (!user) {
     return NextResponse.json({ error: "Invalid email or password" }, { status: 400 });
   }
-  
-  const hashedPassword = await hashPassword(body.password);
+
+  const hashedPassword = await hashPassword(body.password, user.passwordSalt);
 
   if (user.password !== hashedPassword) {
     return NextResponse.json({ error: "Invalid email or password" }, { status: 400 });
   }
-  
+
   const code = await generateRandomCode();
   const expiryDate = new Date(Date.now() + 1000 * 60 * 5);
 

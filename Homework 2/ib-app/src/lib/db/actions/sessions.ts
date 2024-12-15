@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "..";
+import { Session } from "@prisma/client";
 
 export async function createSession(userId: string, token: string, expiresAt: Date) {
   return await prisma.session.create({
@@ -26,7 +27,7 @@ export async function getSessionByUserId(userId: string) {
   return validateSession(session);
 }
 
-async function validateSession(session: any) {
+async function validateSession(session: Session | null) {
   if (!session) {
     return null;
   }

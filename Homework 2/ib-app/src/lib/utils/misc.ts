@@ -11,8 +11,11 @@ export async function generateToken() {
   return randomBytes(16).toString("hex");
 }
 
-export async function hashPassword(password: string) {
-  const salt = process.env.SALT_SECRET!;
+export async function generateSalt() {
+  return randomBytes(16).toString("hex");
+}
+
+export async function hashPassword(password: string, salt: string) {
   return pbkdf2Sync(password, salt, parseInt(process.env.SALT_ROUNDS || "1000"), 16, 'sha512').toString('hex');
 }
 

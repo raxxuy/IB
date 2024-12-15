@@ -10,6 +10,11 @@ export async function GET(request: Request) {
   }
 
   const session = await getSessionByToken(token);
+
+  if (!session) {
+    return NextResponse.json({ error: "Session not found" }, { status: 404 });
+  }
+
   const user = await getUserById(session.userId);
 
   if (!user) {

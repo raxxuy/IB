@@ -2,8 +2,8 @@
 
 import prisma from "..";
 
-export async function createUser(username: string, email: string, password: string) {
-  return await prisma.user.create({ data: { username, email, password } });
+export async function createUser(username: string, email: string, password: string, passwordSalt: string) {
+  return await prisma.user.create({ data: { username, email, password, passwordSalt } });
 }
 
 export async function getUsers() {

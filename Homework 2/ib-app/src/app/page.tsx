@@ -25,7 +25,7 @@ export default function Home() {
     };
 
     checkSession();
-  }, []);
+  }, [router]);
 
   return (
     <div className="w-full h-screen bg-gray-50">

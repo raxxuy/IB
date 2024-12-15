@@ -47,7 +47,7 @@ export async function POST(request: Request) {
 
   if (authCode.type === "signup") {
     await deletePendingUser(user.id);
-    await createUser(user.username, user.email, user.password);
+    await createUser(user.username, user.email, user.password, user.passwordSalt);
   } else {
     const token = await generateToken();
     const expiryDate = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);

@@ -1,6 +1,7 @@
 "use server";
 
 import prisma from "..";
+import { AuthCode } from "@prisma/client";
 
 export async function createAuthCode(userId: string, code: string, type: string, expiresAt: Date) {
   return await prisma.authCode.create({ data: { userId, code, type, expiresAt } });
@@ -25,7 +26,7 @@ export async function deleteAuthCode(id: string) {
   return await prisma.authCode.delete({ where: { id } });
 }
 
-async function validateAuthCode(authCode: any) {
+async function validateAuthCode(authCode: AuthCode | null) {
   if (!authCode) {
     return null;
   }

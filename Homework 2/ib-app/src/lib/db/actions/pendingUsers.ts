@@ -1,10 +1,11 @@
 "use server";
 
 import prisma from "..";
+import { PendingUser } from "@prisma/client";
 import { deleteAuthCode, getAuthCodeByUserId } from "./authCodes";
 
-export async function createPendingUser(username: string, email: string, password: string) {
-  return await prisma.pendingUser.create({ data: { username, email, password } });
+export async function createPendingUser(username: string, email: string, password: string, passwordSalt: string) {
+  return await prisma.pendingUser.create({ data: { username, email, password, passwordSalt } });
 }
 
 export async function getPendingUserByUsername(username: string) {
@@ -21,7 +22,7 @@ export async function deletePendingUser(id: string) {
   return await prisma.pendingUser.delete({ where: { id } });
 }
 
-async function validatePendingUser(pendingUser: any) {
+async function validatePendingUser(pendingUser: PendingUser | null) {
   if (!pendingUser) {
     return null;
   }

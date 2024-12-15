@@ -16,6 +16,18 @@ export function validateSignupForm(formData: SignupFormData) {
     return "Passwords do not match";
   }
 
+  if (!/[A-Z]/.test(password)) {
+    return "Password must contain at least one uppercase letter";
+  }
+
+  if (!/[0-9]/.test(password)) {
+    return "Password must contain at least one number";
+  }
+
+  if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+    return "Password must contain at least one special character";
+  }
+
   if (!/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
     return "Invalid email address";
   }

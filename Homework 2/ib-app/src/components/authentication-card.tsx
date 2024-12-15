@@ -47,6 +47,7 @@ export default function AuthenticationCard({
 
       router.push("/");
     } catch (error) {
+      console.error(error);
       setError("An error occurred");
     } finally {
       setSubmitting(false);
