@@ -1,0 +1,143 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  engineType = "binary"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ROLES
+
+enum Role {
+  USER
+  ADMIN
+  SUPER_ADMIN
+}
+
+enum OrganizationRole {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+enum ResourceRole {
+  MANAGER
+  EDITOR
+  VIEWER
+  NONE
+}
+
+// USERS
+
+model User {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  email        String   @unique
+  password     String
+  passwordSalt String
+  role         Role     @default(USER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  OrgMember OrgMember[] @relation("UserOrgMembers")
+}
+
+model PendingUser {
+  id           String   @id @default(cuid())
+  username     String   @unique
+  email        String   @unique
+  password     String
+  passwordSalt String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model AuthCode {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  code      String
+  type      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ORGANIZATIONS
+
+model Organization {
+  id          String        @id @default(cuid())
+  name        String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  members     OrgMember[]
+  resources   Resource[]
+}
+
+model OrgMember {
+  id             String           @id @default(cuid())
+  userId         String
+  organizationId String
+  user           User             @relation(fields: [userId], references: [id], name: "UserOrgMembers")
+  role           OrganizationRole @default(MEMBER)
+  organization   Organization     @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+
+  @@unique([userId, organizationId])
+  resourceAccess ResourceAccess[]
+}
+
+model Resource {
+  id             String           @id @default(cuid())
+  name           String
+  organizationId String
+  organization   Organization     @relation(fields: [organizationId], references: [id])
+  resourceAccess ResourceAccess[]
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+}
+
+model ResourceAccess {
+  id          String       @id @default(cuid())
+  resourceId  String
+  memberId    String
+  role        ResourceRole @default(VIEWER)
+  resource    Resource     @relation(fields: [resourceId], references: [id])
+  member      OrgMember    @relation(fields: [memberId], references: [id])
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  expiresAt   DateTime?
+
+  @@unique([resourceId, memberId])
+}
+
+model AccessToken {
+  id             String    @id @default(cuid())
+  userId         String    
+  token          String    @unique
+  organizationId String?   // For org-specific access
+  resourceId     String?   // For resource-specific access
+  expiresAt      DateTime
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  @@unique([userId, organizationId])
+  @@unique([userId, resourceId])
+}
